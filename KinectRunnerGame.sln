@@ -1,11 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectRunnerGame.Plugins", "KinectRunnerGame.Plugins.csproj", "{D73E4AF2-2C52-421A-1F5C-0DA03DCF9A82}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectRunnerGame", "Assembly-CSharp-firstpass.csproj", "{0C698F20-E9A6-D2F2-A4B2-C98E2F4AB39C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectRunnerGame", "KinectRunnerGame.csproj", "{699B66CC-2B7A-5BE8-8D02-85B46F0D3ED8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectRunnerGame", "Assembly-CSharp.csproj", "{4B590CD5-3E1A-9267-7142-ED70BF152173}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectRunnerGame.Editor.Plugins", "KinectRunnerGame.Editor.Plugins.csproj", "{C7F32B8E-756B-3360-36D4-33A5F81E404F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectRunnerGame", "Assembly-CSharp-Editor-firstpass.csproj", "{40CD1CB0-B97B-7FDD-5218-39EEA968099D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,20 +13,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D73E4AF2-2C52-421A-1F5C-0DA03DCF9A82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D73E4AF2-2C52-421A-1F5C-0DA03DCF9A82}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D73E4AF2-2C52-421A-1F5C-0DA03DCF9A82}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D73E4AF2-2C52-421A-1F5C-0DA03DCF9A82}.Release|Any CPU.Build.0 = Release|Any CPU
-		{699B66CC-2B7A-5BE8-8D02-85B46F0D3ED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{699B66CC-2B7A-5BE8-8D02-85B46F0D3ED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{699B66CC-2B7A-5BE8-8D02-85B46F0D3ED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{699B66CC-2B7A-5BE8-8D02-85B46F0D3ED8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7F32B8E-756B-3360-36D4-33A5F81E404F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7F32B8E-756B-3360-36D4-33A5F81E404F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7F32B8E-756B-3360-36D4-33A5F81E404F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7F32B8E-756B-3360-36D4-33A5F81E404F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C698F20-E9A6-D2F2-A4B2-C98E2F4AB39C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C698F20-E9A6-D2F2-A4B2-C98E2F4AB39C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C698F20-E9A6-D2F2-A4B2-C98E2F4AB39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C698F20-E9A6-D2F2-A4B2-C98E2F4AB39C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B590CD5-3E1A-9267-7142-ED70BF152173}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B590CD5-3E1A-9267-7142-ED70BF152173}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B590CD5-3E1A-9267-7142-ED70BF152173}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B590CD5-3E1A-9267-7142-ED70BF152173}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40CD1CB0-B97B-7FDD-5218-39EEA968099D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40CD1CB0-B97B-7FDD-5218-39EEA968099D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40CD1CB0-B97B-7FDD-5218-39EEA968099D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40CD1CB0-B97B-7FDD-5218-39EEA968099D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal
