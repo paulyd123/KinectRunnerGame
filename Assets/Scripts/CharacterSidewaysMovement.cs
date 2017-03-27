@@ -2,49 +2,83 @@
 using Assets.Scripts;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using Windows.Kinect;
+using UnityEngine.UI;
 
 public class CharacterSidewaysMovement : MonoBehaviour
 {
 
+	private KinectSensor _sensor;
+	private BodyFrameReader _bodyFrameReader;
+	private Body[] _bodies = null;
+	public GameObject kinectAvailableText;
+	public Text handXText;
+	public bool IsAvailable;
+	public float controller;
+	public bool IsJump;
 
-    private Vector3 moveDirection = Vector3.zero;
-    public float gravity = 20f;
-    private CharacterController controller;
-    private Animator anim;
+	public static KinectManager instance = null;
 
-    private bool isChangingLane = false;
-    private Vector3 locationAfterChangingLane;
-    //distance character will move sideways
-    private Vector3 sidewaysMovementDistance = Vector3.right * 2f;
+	public Body[] GetBodies()
+	{
+		return _bodies;
+	}
 
-    public float SideWaysSpeed = 5.0f;
+	private Vector3 moveDirection = Vector3.zero;
+	public float gravity = 20f;
+	//private CharacterController controller;
+	private Animator anim;
 
-    public float JumpSpeed = 8.0f;
-    public float Speed = 6.0f;
-    //Max gameobject
-    public Transform CharacterGO;
-    
-    IInputDetector inputDetector = null;
+	private bool isChangingLane = false;
+	private Vector3 locationAfterChangingLane;
+	//distance character will move sideways
+	private Vector3 sidewaysMovementDistance = Vector3.right * 2f;
 
-    // Use this for initialization
-    void Start()
-    {
-        moveDirection = transform.forward;
-        moveDirection = transform.TransformDirection(moveDirection);
-        moveDirection *= Speed;
+	public float SideWaysSpeed = 5.0f;
 
-        UIManager.Instance.ResetScore();
-        UIManager.Instance.SetStatus(Constants.StatusTapToStart);
+	public float JumpSpeed = 8.0f;
+	public float Speed = 6.0f;
+	//Max gameobject
+	public Transform CharacterGO;
 
-        GameManager.Instance.GameState = GameState.Start;
+	IInputDetector inputDetector = null;
 
-        anim = CharacterGO.GetComponent<Animator>();
-        inputDetector = GetComponent<IInputDetector>();
-        controller = GetComponent<CharacterController>();
-    }
+	// Use this for initialization
+	void Start()
+	{
+		_sensor = KinectSensor.GetDefault();
 
-    // Update is called once per frame
-    void Update()
+		if (_sensor != null)
+		{
+			IsAvailable = _sensor.IsAvailable;
+
+			kinectAvailableText.SetActive(IsAvailable);
+
+			_bodyFrameReader = _sensor.BodyFrameSource.OpenReader();
+
+			if (!_sensor.IsOpen)
+			{
+				_sensor.Open();
+			}
+
+			_bodies = new Body[_sensor.BodyFrameSource.BodyCount];
+		}
+		moveDirection = transform.forward;
+		moveDirection = transform.TransformDirection(moveDirection);
+		moveDirection *= Speed;
+
+		UIManager.Instance.ResetScore();
+		UIManager.Instance.SetStatus(Constants.StatusTapToStart);
+
+		GameManager.Instance.GameState = GameState.Start;
+
+		anim = CharacterGO.GetComponent<Animator>();
+		//inputDetector = GetComponent<IInputDetector>();
+		//controller = GetComponent<CharacterController>();
+	}
+
+	// Update is called once per frame
+	/* void Update()
     {
         switch (GameManager.Instance.GameState)
         {
@@ -93,17 +127,17 @@ public class CharacterSidewaysMovement : MonoBehaviour
                 break;
         }
 
-    }
+    }*/
 
-    private void CheckHeight()
-    {
-        if (transform.position.y < -10)
-        {
-            GameManager.Instance.Die();
-        }
-    }
+	private void CheckHeight()
+	{
+		if (transform.position.y < -10)
+		{
+			GameManager.Instance.Die();
+		}
+	}
 
-    private void DetectJumpOrSwipeLeftRight()
+	/*  private void DetectJumpOrSwipeLeftRight()
     {
         var inputDirection = inputDetector.DetectInputDirection();
         if (controller.isGrounded && inputDirection.HasValue && inputDirection == InputDirection.Top
@@ -135,18 +169,51 @@ public class CharacterSidewaysMovement : MonoBehaviour
         }
 
 
-    }
+    }*/
 
-    public void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        //if we hit the left or right border
-        if(hit.gameObject.tag == Constants.WidePathBorderTag)
-        {
-            isChangingLane = false;
-            moveDirection.x = 0;
-        }
-    }
+	void Update()
+	{
+		IsAvailable = _sensor.IsAvailable;
 
-    
+		if (_bodyFrameReader != null)
+		{
+			var frame = _bodyFrameReader.AcquireLatestFrame();
+
+			if (frame != null)
+			{
+				frame.GetAndRefreshBodyData(_bodies);
+
+				foreach (var body in _bodies.Where(b => b.IsTracked))
+				{
+					IsAvailable = true;
+
+					if (body.HandRightConfidence == TrackingConfidence.High && body.HandRightState == HandState.Lasso)
+					{
+						IsJump = true;
+					}
+					else
+					{
+						controller = RescalingToRangesB(-1, 1, -8, 8, body.Lean.X);
+						handXText.text = controller.ToString();
+					}
+				}
+
+				frame.Dispose();
+				frame = null;
+			}
+		}
+	}
+
+	public void OnControllerColliderHit(ControllerColliderHit hit)
+	{
+		//if we hit the left or right border
+		if(hit.gameObject.tag == Constants.WidePathBorderTag)
+		{
+			isChangingLane = false;
+			moveDirection.x = 0;
+		}
+	}
+
+
 
 }

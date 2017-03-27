@@ -1,9 +1,8 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Input\KinectControls.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CharacterSidewaysMovement.cs">
     <Files>
-      <File FileName="Assets\Scripts\Input\KinectControls.cs" Line="21" Column="2" />
-      <File FileName="Assets\Scripts\CharacterRotateMovement.cs" Line="18" Column="2" />
+      <File FileName="Assets\Scripts\CharacterSidewaysMovement.cs" Line="186" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
