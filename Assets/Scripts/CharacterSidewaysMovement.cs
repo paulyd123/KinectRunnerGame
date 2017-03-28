@@ -34,6 +34,7 @@ public class CharacterSidewaysMovement : MonoBehaviour
 
     private bool isChangingLane = false;
     private Vector3 locationAfterChangingLane;
+
     //distance character will move sideways
     private Vector3 sidewaysMovementDistance = Vector3.right * 2f;
 
@@ -59,11 +60,8 @@ public class CharacterSidewaysMovement : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-		//Application.LoadLevel();
 
-		moveDirection = transform.forward;
-		moveDirection = transform.TransformDirection(moveDirection);
-		moveDirection *= Speed;
+
 
 		UIManager.Instance.ResetScore();
 		UIManager.Instance.SetStatus(Constants.StatusTapToStart);
@@ -74,6 +72,10 @@ public class CharacterSidewaysMovement : MonoBehaviour
 		inputDetector = GetComponent<IInputDetector>();
 		controller = GetComponent<CharacterController>();
 		_sensor = KinectSensor.GetDefault();
+
+		moveDirection = transform.forward;
+		moveDirection = transform.TransformDirection(moveDirection);
+		moveDirection *= Speed;
 
         if (_sensor != null)
         {
@@ -90,6 +92,8 @@ public class CharacterSidewaysMovement : MonoBehaviour
 
             _bodies = new Body[_sensor.BodyFrameSource.BodyCount];
         }
+
+
        
     }
 
