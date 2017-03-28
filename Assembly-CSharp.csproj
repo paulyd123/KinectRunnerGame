@@ -59,6 +59,7 @@
      <Compile Include="Assets\Scripts\KinectManager.cs" />
      <Compile Include="Assets\Scripts\Obstacle.cs" />
      <Compile Include="Assets\Scripts\PathSpawnCollider.cs" />
+     <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\RandomMaterial.cs" />
      <Compile Include="Assets\Scripts\RedBorder.cs" />
      <Compile Include="Assets\Scripts\StuffSpawner.cs" />

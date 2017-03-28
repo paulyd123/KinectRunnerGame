@@ -17,7 +17,9 @@ public class SwipeDetector : MonoBehaviour, IInputDetector
     private TimeSpan maxSwipeDuration = TimeSpan.FromSeconds(1);
     private TimeSpan minSwipeDuration = TimeSpan.FromMilliseconds(100);
 
-    public InputDirection? DetectInputDirection()
+
+	//I CHANGED THIS TO INT i TO GET IT TO WORK FOR NOW
+	public InputDirection? DetectInputDirection(int i)
     {
         if (state == State.SwipeNotStarted)
         {

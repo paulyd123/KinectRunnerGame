@@ -4,8 +4,10 @@ using System.Collections;
 public class TimeDestroyer : MonoBehaviour
 {
 
+
+
     // Use this for initialization
-    void Start()
+   /* void Start()
     {
         Invoke("DestroyObject", LifeTime);
     }
@@ -18,5 +20,5 @@ public class TimeDestroyer : MonoBehaviour
     }
 
 
-    public float LifeTime = 10f;
+   public float LifeTime = 10f;*/
 }

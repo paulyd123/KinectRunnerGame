@@ -90,7 +90,7 @@ public class CharacterRotateMovement : MonoBehaviour
 
     private void DetectJumpOrSwipeLeftRight()
     {
-        var inputDirection = inputDetector.DetectInputDirection();
+        var inputDirection = inputDetector.DetectInputDirection(1);
         if (controller.isGrounded && inputDirection.HasValue && inputDirection == InputDirection.Top)
         {
             moveDirection.y = JumpSpeed;

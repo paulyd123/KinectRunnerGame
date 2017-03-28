@@ -4,65 +4,63 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using Windows.Kinect;
 using UnityEngine.UI;
+using System.Linq;
 
 public class CharacterSidewaysMovement : MonoBehaviour
 {
-
 	private KinectSensor _sensor;
-	private BodyFrameReader _bodyFrameReader;
-	private Body[] _bodies = null;
+    private BodyFrameReader _bodyFrameReader;
+    private Body[] _bodies = null;
+	
 	public GameObject kinectAvailableText;
-	public Text handXText;
-	public bool IsAvailable;
-	public float controller;
-	public bool IsJump;
+    public Text handXText;
 
-	public static KinectManager instance = null;
+    public bool IsAvailable;
+    public float CharacterPosition;
+	public bool IsFire;
+	public int test;
 
-	public Body[] GetBodies()
-	{
-		return _bodies;
-	}
+    public static CharacterSidewaysMovement instance = null;
 
-	private Vector3 moveDirection = Vector3.zero;
-	public float gravity = 20f;
-	//private CharacterController controller;
-	private Animator anim;
+    public Body[] GetBodies()
+    {
+        return _bodies;
+    }
 
-	private bool isChangingLane = false;
-	private Vector3 locationAfterChangingLane;
-	//distance character will move sideways
-	private Vector3 sidewaysMovementDistance = Vector3.right * 2f;
+    private Vector3 moveDirection = Vector3.zero;
+    public float gravity = 20f;
+    private CharacterController controller;
+    private Animator anim;
 
-	public float SideWaysSpeed = 5.0f;
+    private bool isChangingLane = false;
+    private Vector3 locationAfterChangingLane;
+    //distance character will move sideways
+    private Vector3 sidewaysMovementDistance = Vector3.right * 2f;
 
-	public float JumpSpeed = 8.0f;
-	public float Speed = 6.0f;
-	//Max gameobject
-	public Transform CharacterGO;
+    public float SideWaysSpeed = 5.0f;
 
-	IInputDetector inputDetector = null;
+    public float JumpSpeed = 8.0f;
+    public float Speed = 6.0f;
+    //Max gameobject
+    public Transform CharacterGO;
+    
+    IInputDetector inputDetector = null;
+	
+	void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+            DestroyImmediate(gameObject);
+    }
 
-	// Use this for initialization
-	void Start()
-	{
-		_sensor = KinectSensor.GetDefault();
+    // Use this for initialization
+    void Start()
+    {
+		//Application.LoadLevel();
 
-		if (_sensor != null)
-		{
-			IsAvailable = _sensor.IsAvailable;
-
-			kinectAvailableText.SetActive(IsAvailable);
-
-			_bodyFrameReader = _sensor.BodyFrameSource.OpenReader();
-
-			if (!_sensor.IsOpen)
-			{
-				_sensor.Open();
-			}
-
-			_bodies = new Body[_sensor.BodyFrameSource.BodyCount];
-		}
 		moveDirection = transform.forward;
 		moveDirection = transform.TransformDirection(moveDirection);
 		moveDirection *= Speed;
@@ -73,73 +71,134 @@ public class CharacterSidewaysMovement : MonoBehaviour
 		GameManager.Instance.GameState = GameState.Start;
 
 		anim = CharacterGO.GetComponent<Animator>();
-		//inputDetector = GetComponent<IInputDetector>();
-		//controller = GetComponent<CharacterController>();
+		inputDetector = GetComponent<IInputDetector>();
+		controller = GetComponent<CharacterController>();
+		_sensor = KinectSensor.GetDefault();
+
+        if (_sensor != null)
+        {
+            IsAvailable = _sensor.IsAvailable;
+
+            kinectAvailableText.SetActive(IsAvailable);
+            
+            _bodyFrameReader = _sensor.BodyFrameSource.OpenReader();
+
+            if (!_sensor.IsOpen)
+            {
+                _sensor.Open();
+            }
+
+            _bodies = new Body[_sensor.BodyFrameSource.BodyCount];
+        }
+       
+    }
+
+	static float RescalingToRangesB(float scaleAStart, float scaleAEnd, float scaleBStart, float scaleBEnd, float valueA)
+	{
+		return (((valueA - scaleAStart) * (scaleBEnd - scaleBStart)) / (scaleAEnd - scaleAStart)) + scaleBStart;
 	}
 
-	// Update is called once per frame
-	/* void Update()
+    // Update is called once per frame
+    void Update()
     {
-        switch (GameManager.Instance.GameState)
+		switch (GameManager.Instance.GameState)
+		{
+		case GameState.Start:
+			if (Input.GetMouseButtonUp(0))
+			{
+				anim.SetBool(Constants.AnimationStarted, true);
+				var instance = GameManager.Instance;
+				instance.GameState = GameState.Playing;
+
+				UIManager.Instance.SetStatus(string.Empty);
+			}
+			break;
+		case GameState.Playing:
+			UIManager.Instance.IncreaseScore(0.001f);
+
+			CheckHeight();
+
+
+
+			DetectJumpOrSwipeLeftRight();
+
+			//apply gravity
+			moveDirection.y -= gravity * Time.deltaTime;
+
+			if (isChangingLane)
+			{
+				if (Mathf.Abs(transform.position.x - locationAfterChangingLane.x) < 0.1f)
+				{
+					isChangingLane = false;
+					moveDirection.x = 0;
+				}
+			}
+
+			//move the player
+			controller.Move(moveDirection * Time.deltaTime);
+
+			break;
+		case GameState.Dead:
+			anim.SetBool(Constants.AnimationStarted, false);
+			if (Input.GetMouseButtonUp(0))
+			{
+				//restart
+				SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+			}
+			break;
+		default:
+			break;
+		}
+
+	
+	 if (_bodyFrameReader != null)
         {
-            case GameState.Start:
-                if (Input.GetMouseButtonUp(0))
+            var frame = _bodyFrameReader.AcquireLatestFrame();
+
+            if (frame != null)
+            {
+                frame.GetAndRefreshBodyData(_bodies);
+
+                foreach (var body in _bodies.Where(b => b.IsTracked))
                 {
-                    anim.SetBool(Constants.AnimationStarted, true);
-                    var instance = GameManager.Instance;
-                    instance.GameState = GameState.Playing;
+                    IsAvailable = true;
 
-                    UIManager.Instance.SetStatus(string.Empty);
-                }
-                break;
-            case GameState.Playing:
-                UIManager.Instance.IncreaseScore(0.001f);
-
-                CheckHeight();
-
-                DetectJumpOrSwipeLeftRight();
-
-                //apply gravity
-                moveDirection.y -= gravity * Time.deltaTime;
-
-                if (isChangingLane)
-                {
-                    if (Mathf.Abs(transform.position.x - locationAfterChangingLane.x) < 0.1f)
+                    if (body.HandRightConfidence == TrackingConfidence.High && body.HandRightState == HandState.Lasso)
                     {
-                        isChangingLane = false;
-                        moveDirection.x = 0;
+						IsFire = true;
+                    }
+                    else
+                    {
+                        CharacterPosition = RescalingToRangesB(-1, 1, -4, 4, body.Lean.X);
+                        handXText.text = CharacterPosition.ToString();
+						test = (int)CharacterPosition;
                     }
                 }
 
-                //move the player
-                controller.Move(moveDirection * Time.deltaTime);
+                frame.Dispose();
+                frame = null;
+            }
+        
 
-                break;
-            case GameState.Dead:
-                anim.SetBool(Constants.AnimationStarted, false);
-                if (Input.GetMouseButtonUp(0))
-                {
-                    //restart
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                }
-                break;
-            default:
-                break;
-        }
-
-    }*/
-
-	private void CheckHeight()
-	{
-		if (transform.position.y < -10)
-		{
-			GameManager.Instance.Die();
 		}
-	}
+		
+			
 
-	/*  private void DetectJumpOrSwipeLeftRight()
+       
+
+    }
+
+    private void CheckHeight()
     {
-        var inputDirection = inputDetector.DetectInputDirection();
+        if (transform.position.y < -10)
+        {
+            GameManager.Instance.Die();
+        }
+    }
+
+    private void DetectJumpOrSwipeLeftRight()
+    {
+		var inputDirection = inputDetector.DetectInputDirection(test);
         if (controller.isGrounded && inputDirection.HasValue && inputDirection == InputDirection.Top
             && !isChangingLane)
         {
@@ -169,51 +228,18 @@ public class CharacterSidewaysMovement : MonoBehaviour
         }
 
 
-    }*/
+    }
 
-	void Update()
-	{
-		IsAvailable = _sensor.IsAvailable;
+    public void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        //if we hit the left or right border
+        if(hit.gameObject.tag == Constants.WidePathBorderTag)
+        {
+            isChangingLane = false;
+            moveDirection.x = 0;
+        }
+    }
 
-		if (_bodyFrameReader != null)
-		{
-			var frame = _bodyFrameReader.AcquireLatestFrame();
-
-			if (frame != null)
-			{
-				frame.GetAndRefreshBodyData(_bodies);
-
-				foreach (var body in _bodies.Where(b => b.IsTracked))
-				{
-					IsAvailable = true;
-
-					if (body.HandRightConfidence == TrackingConfidence.High && body.HandRightState == HandState.Lasso)
-					{
-						IsJump = true;
-					}
-					else
-					{
-						controller = RescalingToRangesB(-1, 1, -8, 8, body.Lean.X);
-						handXText.text = controller.ToString();
-					}
-				}
-
-				frame.Dispose();
-				frame = null;
-			}
-		}
-	}
-
-	public void OnControllerColliderHit(ControllerColliderHit hit)
-	{
-		//if we hit the left or right border
-		if(hit.gameObject.tag == Constants.WidePathBorderTag)
-		{
-			isChangingLane = false;
-			moveDirection.x = 0;
-		}
-	}
-
-
+    
 
 }
