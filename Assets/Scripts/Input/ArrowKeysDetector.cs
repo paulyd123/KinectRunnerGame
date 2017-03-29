@@ -4,7 +4,7 @@ using UnityEngine;
 public class ArrowKeysDetector : MonoBehaviour, IInputDetector
 
 {
-	public float playerspeed = 6f;
+	/*public float playerspeed = 6f;
 
     private Vector3 playerPos = new Vector3(0, -9.5f, 0);
 
@@ -27,7 +27,7 @@ public class ArrowKeysDetector : MonoBehaviour, IInputDetector
 
         transform.position = playerPos;
 		
-    }
+    }*/
     
 
 	public InputDirection? DetectInputDirection(int test)
