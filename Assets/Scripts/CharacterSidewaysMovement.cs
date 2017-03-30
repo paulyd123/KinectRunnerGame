@@ -17,8 +17,10 @@ public class CharacterSidewaysMovement : MonoBehaviour
 
     public bool IsAvailable;
     public float CharacterPosition;
-	public bool IsFire;
+	public bool IsJump;
 	public int test;
+
+
 
     public static CharacterSidewaysMovement instance = null;
 
@@ -108,7 +110,7 @@ public class CharacterSidewaysMovement : MonoBehaviour
 		switch (GameManager.Instance.GameState)
 		{
 		case GameState.Start:
-			if (Input.GetMouseButtonUp(0))
+			if (Input.GetMouseButtonUp(0)) /* || JointType.Foot_Right*/
 			{
 				anim.SetBool(Constants.AnimationStarted, true);
 				var instance = GameManager.Instance;
@@ -167,17 +169,39 @@ public class CharacterSidewaysMovement : MonoBehaviour
                 {
                     IsAvailable = true;
 
-                    if (body.HandRightConfidence == TrackingConfidence.High && body.HandRightState == HandState.Lasso)
+					if (body.HandRightConfidence == TrackingConfidence.High && body.HandRightState == HandState.Closed)
                     {
-						IsFire = true;
+						SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                     }
                     else
                     {
-                        CharacterPosition = RescalingToRangesB(-1, 1, -4, 4, body.Lean.X);
+                        CharacterPosition = RescalingToRangesB(-1, 1, -3, 5, body.Lean.X);
                         handXText.text = CharacterPosition.ToString();
 						test = (int)CharacterPosition;
                     }
-                }
+
+
+					if (body.HandLeftConfidence == TrackingConfidence.High && body.HandLeftState == HandState.Open)
+					{
+						moveDirection.y = JumpSpeed;
+						anim.SetBool(Constants.AnimationJump, true);
+					}
+					else
+					{
+						anim.SetBool(Constants.AnimationJump, false);
+					} 
+
+					if (body.HandLeftConfidence == TrackingConfidence.High && body.HandLeftState == HandState.Closed)
+					{
+						anim.SetBool(Constants.AnimationStarted, true);
+						var instance = GameManager.Instance;
+						instance.GameState = GameState.Playing;
+
+						UIManager.Instance.SetStatus(string.Empty);
+					}
+
+				
+				}
 
                 frame.Dispose();
                 frame = null;

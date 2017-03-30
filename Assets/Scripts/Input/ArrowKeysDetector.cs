@@ -1,5 +1,10 @@
-using Assets.Scripts;
 using UnityEngine;
+using Assets.Scripts;
+using UnityEngine.SceneManagement;
+using System.Collections;
+using Windows.Kinect;
+using UnityEngine.UI;
+using System.Linq;
 
 public class ArrowKeysDetector : MonoBehaviour, IInputDetector
 
