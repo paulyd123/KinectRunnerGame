@@ -30,7 +30,7 @@ public class CharacterSidewaysMovement : MonoBehaviour
     }
 
     private Vector3 moveDirection = Vector3.zero;
-    public float gravity = 20f;
+    public float gravity = 10f;
     private CharacterController controller;
     private Animator anim;
 
@@ -107,10 +107,11 @@ public class CharacterSidewaysMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		
 		switch (GameManager.Instance.GameState)
 		{
 		case GameState.Start:
-			if (Input.GetMouseButtonUp(0)) /* || JointType.Foot_Right*/
+			if (Input.GetMouseButtonUp(0))
 			{
 				anim.SetBool(Constants.AnimationStarted, true);
 				var instance = GameManager.Instance;
@@ -120,10 +121,9 @@ public class CharacterSidewaysMovement : MonoBehaviour
 			}
 			break;
 		case GameState.Playing:
-			UIManager.Instance.IncreaseScore(0.001f);
+			UIManager.Instance.IncreaseScore(1f);
 
 			CheckHeight();
-
 
 
 			DetectJumpOrSwipeLeftRight();
@@ -169,13 +169,13 @@ public class CharacterSidewaysMovement : MonoBehaviour
                 {
                     IsAvailable = true;
 
-					if (body.HandRightConfidence == TrackingConfidence.High && body.HandRightState == HandState.Closed)
+					if (body.HandRightConfidence == TrackingConfidence.High && body.HandRightState == HandState.Lasso)
                     {
 						SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                     }
                     else
                     {
-                        CharacterPosition = RescalingToRangesB(-1, 1, -3, 5, body.Lean.X);
+                        CharacterPosition = RescalingToRangesB(-1, 1, -3, 3, body.Lean.X);
                         handXText.text = CharacterPosition.ToString();
 						test = (int)CharacterPosition;
                     }
@@ -183,8 +183,13 @@ public class CharacterSidewaysMovement : MonoBehaviour
 
 					if (body.HandLeftConfidence == TrackingConfidence.High && body.HandLeftState == HandState.Open)
 					{
-						moveDirection.y = JumpSpeed;
-						anim.SetBool(Constants.AnimationJump, true);
+						if (anim.bodyPosition.y < 2) {
+							
+							moveDirection.y = JumpSpeed;
+							anim.SetBool (Constants.AnimationJump, true);
+						} 
+						//IsJump <= 3;
+	
 					}
 					else
 					{

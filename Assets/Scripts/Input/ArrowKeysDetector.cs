@@ -42,10 +42,10 @@ public class ArrowKeysDetector : MonoBehaviour, IInputDetector
 		else if (Input.GetKeyUp (KeyCode.DownArrow))
 			return InputDirection.Bottom;
 		else if (Input.GetKeyUp (KeyCode.RightArrow) || test > 0) {
-			Debug.Log ("Right");
+			//Debug.Log ("Right");
 			return InputDirection.Right;
 		} else if (Input.GetKeyUp (KeyCode.LeftArrow) || test < 0	) {
-			Debug.Log ("Left");
+			//Debug.Log ("Left");
 			return InputDirection.Left;
 		}
         else
